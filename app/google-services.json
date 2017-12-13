@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "374503555300",
+    "firebase_url": "https://fast-response-emergency-kit.firebaseio.com",
+    "project_id": "fast-response-emergency-kit",
+    "storage_bucket": "fast-response-emergency-kit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374503555300:android:2e12f651f8627c56",
+        "android_client_info": {
+          "package_name": "com.milfrost.frek"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "374503555300-s216if0fijq86l2fpnlq1ciig9tqi07l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6O5oUyC-hgjhVPP6DywoXsZzIX2Lt2qc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

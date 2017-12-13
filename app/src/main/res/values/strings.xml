@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name">Frek</string>
+
+    <string name="logo_caption">Your one stop emergency kit</string>
+
+    <!-- login and register related strings-->
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="forgot_pwd">Forgot password?</string>
+    <string name="no_acc_option">No account yet? Sign up </string>
+    <string name="already_have_acc">Already have an account?</string>
+    <string name="here">here</string>
+
+    <!-- user credentials related strings -->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="email_addr">Email Address</string>
+    <string name="confirm_pwd">Confirm Password</string>
+    <string name="mobile_num">Mobile Number</string>
+
+    <!-- Homepage related strings-->
+    <string name="home">Home</string>
+    <string name="circle">Circle</string>
+    <string name="new_emergency">Emergency Report</string>
+    <string name="first_aid">First Aid</string>
+    <string name="profile">Profile</string>
+    <string name="time_min_ago">%$1d min ago</string>
+    <string name="time_hour_ago">%$1d hour ago</string>
+    <string name="comment">comment</string>
+    <string name="share">share</string>
+    <string name="location">Location</string>
+    <string name="chat">Chat</string>
+    <string name="title_activity_dashboard">Dashboard</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="notification">Notification</string>
+    <string name="emergency_num">Emergency Number</string>
+    <string name="emergency_dial">Emergency Dial</string>
+    <string name="news">News</string>
+
+    <!-- New Post-->
+    <string name="category">Category</string>
+    <string name="description">Description</string>
+    <string name="describe_the_event">Describe the event</string>
+    <string name="choose_photo">Choose a photo</string>
+    <string name="post">Post</string>
+
+    <!--Profile Fragment-->
+    <string name="log_out">Log Out</string>
+    <string name="feedback">Feedback</string>
+    <string name="report_problem">Report a problem</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="change_password">Change Password</string>
+    <string name="edit_profile">Edit Profile</string>
+
+    <!-- Newsfeed fragment -->
+    <string name="amount_comment">%1$d Comment</string>
+    <string name="amount_comments">%1$d Comments</string>
+    <string name="read_more">Read More</string>
+
+    <!-- Error Messages -->
+    <string name="wrong_username_pwd">The username or password you have entered is invalid.</string>
+    <string name="empty_field_warning">All field(s) should be filled.</string>
+    <string name="empty_email_warning">Please enter your email</string>
+    <string name="empty_password_warning">Please enter your password</string>
+    <string name="invalid_email_format_warning">Please enter email with correct format. e.g john@frek.com</string>
+
+    <!-- Emergency Number -->
+    <string name="enter_location">Enter Location name</string>
+
+    <!-- Messages -->
+    <string name="communicating_w_server">Communicating with server</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
