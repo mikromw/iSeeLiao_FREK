@@ -21,5 +21,6 @@ public interface CirclePageInterface {
     interface InnerChatView{
         void setList(List<Chat> chatList);
         void notifyAdapter();
+        void resetInputBox();
     }
 }

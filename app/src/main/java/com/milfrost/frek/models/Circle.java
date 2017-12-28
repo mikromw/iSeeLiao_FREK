@@ -3,6 +3,8 @@ package com.milfrost.frek.models;
 import com.google.firebase.database.DataSnapshot;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by ASUS on 05/12/2017.

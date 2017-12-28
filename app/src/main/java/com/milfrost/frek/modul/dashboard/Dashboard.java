@@ -81,7 +81,6 @@ public class Dashboard extends AppCompatActivity {
             tabLayout.getTabAt(i).setIcon(inactiveTabIcons[i]);
         }
         mViewPager.setOffscreenPageLimit(4);
-
         btnNewPost = (ImageView)findViewById(R.id.btn_new_post);
     }
 

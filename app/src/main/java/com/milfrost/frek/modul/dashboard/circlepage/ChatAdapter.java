@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.milfrost.frek.MyApplication;
 import com.milfrost.frek.R;
 import com.milfrost.frek.models.Chat;
 import com.milfrost.frek.utils.DateParser;
@@ -31,7 +32,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Chat chat = chats.get(position);
-        if(chat.sender.getName().equals("Vincent Theonardo")){
+        if(chat.sender.getEmailAddress().equals(MyApplication.getInstance().loggedUser.getEmailAddress())){
             return Chat.SENT_CHAT;
         }
         else {

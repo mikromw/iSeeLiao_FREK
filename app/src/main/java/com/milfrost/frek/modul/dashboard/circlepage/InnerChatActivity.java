@@ -57,7 +57,9 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         Bundle bundle = getIntent().getBundleExtra("bundle");
         circle = (Circle) bundle.getSerializable("item");
         count = 0;
-
+        for(int i=0;i<circle.chats.length;i++){
+            System.out.println("chats ="+circle.chats[i].content);
+        }
         initViews();
         initObjects();
         setEvents();
@@ -94,7 +96,7 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
     }
 
     private void initObjects(){
-        chatActivityPresenter = new InnerChatActivityPresenter(InnerChatActivity.this);
+        chatActivityPresenter = new InnerChatActivityPresenter(InnerChatActivity.this,circle);
         chatActivityPresenter.viewInterface = this;
 
         chats = new ArrayList<>();
@@ -105,7 +107,7 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         recyclerView.setLayoutManager( new LinearLayoutManager(InnerChatActivity.this));
         recyclerView.setHasFixedSize(true);
 
-        chatActivityPresenter.loadData(circle);
+        chatActivityPresenter.loadData();
 
         listenToChatData();
     }
@@ -142,5 +144,11 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
 
             }
         });
+    }
+
+    @Override
+    public void resetInputBox() {
+        textBox.setText("");
+        //hide keyboard
     }
 }

@@ -204,7 +204,7 @@ public class ApiRequest {
         databaseReference.child("users").child(emailFinal).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.print("getUserInformation = "+dataSnapshot.toString());
+                //System.out.print("getUserInformation = "+dataSnapshot.toString());
                 //System.out.println("User loaded = "+dataSnapshot.toString());
                 LogHelper.debug("getUserInformation",dataSnapshot.toString());
                 User user = new User(dataSnapshot);
@@ -261,7 +261,7 @@ public class ApiRequest {
         databaseReference.child("circles").child(circleId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
-
+                System.out.println("circle Snapshot :" + dataSnapshot.toString());
                 final Circle circle = new Circle(dataSnapshot);
 
                 final Iterator circleId = dataSnapshot.child("members").getChildren().iterator();
@@ -307,11 +307,13 @@ public class ApiRequest {
                     Iterator chatIterator = dataSnapshot.child("chats").getChildren().iterator();
                     final List<Chat> chats = new ArrayList<Chat>();
                     while (chatIterator.hasNext()){
-                        DataSnapshot chatData = (DataSnapshot)chatIterator.next();
+                        final DataSnapshot chatData = (DataSnapshot)chatIterator.next();
+
                         getChatData(chatData.getKey().toString(), new ServerCallback() {
                             @Override
                             public void onSuccess(Object object) {
                                 chats.add((Chat)object);
+                                System.out.println("key = "+chatData.getKey());
                                 if(chats.size() == dataSnapshot.child("chats").getChildrenCount()){
                                     circle.setChats(chats.toArray(new Chat[0]));
                                     circleLoadingStatus.isChatLoaded=true;
@@ -341,12 +343,14 @@ public class ApiRequest {
         databaseReference.child("chats").child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 final Chat chat = new Chat(dataSnapshot);
                 int existingUser = MyApplication.getInstance().isUserExistInList(dataSnapshot.child("author").getValue().toString());
                 if(existingUser==-1){
                     getUserInformation(new ServerCallback() {
                         @Override
                         public void onSuccess(Object object) {
+                            System.out.println("Chat user retrieved");
                             chat.setUser((User)object);
                             serverCallback.onSuccess(chat);
                         }
@@ -405,15 +409,14 @@ public class ApiRequest {
         });
     }
 
-    public void sendChat(String circleId,String content ){
+    public void sendChat(String circleId,String content,String datetime ){
         HashMap<String,Object> map = new HashMap<>();
-        map.put("author",MyApplication.getInstance().loggedUser.getEmailAddress());
+        map.put("author",MyApplication.getInstance().loggedUser.getEmailAddress().replace(",","."));
         map.put("content",content);
         map.put("media","");
-        map.put("time_created",DateParser.getCurrentTimeInString());
+        map.put("time_created",datetime);
 
         String key = databaseReference.child("chats").push().getKey();
-        System.out.println(key);
 
         databaseReference.child("chats").child(key).setValue(map);
         databaseReference.child("circles").child(circleId).child("chats").child(key).setValue(1);

@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.milfrost.frek.MyApplication;
 import com.milfrost.frek.R;
+import com.milfrost.frek.models.User;
+import com.milfrost.frek.modul.splashScreen.SplashScreen;
 import com.milfrost.frek.utils.ApiRequest;
 import com.milfrost.frek.modul.dashboard.Dashboard;
 import com.milfrost.frek.modul.registerPage.RegisterPage;
@@ -38,9 +42,29 @@ public class LoginPresenter{
 
     }
 
-    private void openDashboardPage(){
+    /*private void openDashboardPage(){
         Intent intent = new Intent(context, Dashboard.class);
         context.startActivity(intent);
+    }*/
+
+    private void openDashboard(){
+        ApiRequest.getInstance().getUserInformation(new ApiRequest.ServerCallback() {
+            @Override
+            public void onSuccess(Object object) {
+                User user = (User)object;
+                MyApplication.getInstance().loggedUser = user;
+                Intent dasboardIntent = new Intent(context, Dashboard.class);
+                context.startActivity(dasboardIntent);
+                viewInterface.dismissProgressDialog();
+                viewInterface.finishActivity();
+            }
+
+            @Override
+            public void onError(Object object) {
+
+            }
+        }, FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
     }
 
     public void login(String emailAddress,String password){
@@ -49,9 +73,8 @@ public class LoginPresenter{
             ApiRequest.getInstance().login(emailAddress, password, new ApiRequest.ServerCallback() {
                 @Override
                 public void onSuccess(Object object) {
-                    openDashboardPage();
-                    viewInterface.dismissProgressDialog();
-                    viewInterface.finishActivity();
+                    openDashboard();
+
                 }
 
                 @Override
