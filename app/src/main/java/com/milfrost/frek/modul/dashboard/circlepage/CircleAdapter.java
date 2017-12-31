@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.milfrost.frek.MyApplication;
 import com.milfrost.frek.R;
+import com.milfrost.frek.models.Chat;
 import com.milfrost.frek.models.Circle;
 import com.milfrost.frek.utils.DateParser;
 
@@ -26,7 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by ASUS on 06/12/2017.
  */
 
-public class CircleAdapter extends RecyclerView.Adapter<CircleAdapter.ViewHolder> {
+public class CircleAdapter extends RecyclerView.Adapter<CircleAdapter.ViewHolder> implements CirclePageInterface.CircleAdapterWithInnerChat {
     Context context;
     List<Circle> circles;
 
@@ -81,6 +82,16 @@ public class CircleAdapter extends RecyclerView.Adapter<CircleAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return circles.size();
+    }
+
+    @Override
+    public void updateCircleChat(Chat[] chats, String circleId) {
+        for(Circle circle:circles){
+            if(circle.key.equals(circleId)){
+                circle.chats = chats;
+                notifyDataSetChanged();
+            }
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

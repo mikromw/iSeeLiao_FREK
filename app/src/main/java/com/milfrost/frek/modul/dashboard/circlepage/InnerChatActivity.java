@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toolbar;
@@ -30,6 +31,8 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
     ChatAdapter chatAdapter;
     List<Chat> chats;
     int count;
+
+    CirclePageInterface.CircleAdapterWithInnerChat adapterWithInnerChat;
 
     @Override
     protected void onStop() {
@@ -108,8 +111,8 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         recyclerView.setHasFixedSize(true);
 
         chatActivityPresenter.loadData();
+        chatActivityPresenter.listenToChatData();
 
-        listenToChatData();
     }
 
     @Override
@@ -123,32 +126,14 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         chatAdapter.notifyDataSetChanged();
     }
 
-
-    public void listenToChatData(){
-        ApiRequest.getInstance().listenToChatData(circle.key, new ApiRequest.ServerCallback() {
-            @Override
-            public void onSuccess(Object object) {
-                Chat chat = (Chat)object;
-                System.out.println(chat.content);
-                if(count<=chats.size()) {
-                    count+=1;
-                }else {
-                    chats.add(chat);
-                    notifyAdapter();
-
-                }
-            }
-
-            @Override
-            public void onError(Object object) {
-
-            }
-        });
-    }
-
     @Override
     public void resetInputBox() {
         textBox.setText("");
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
         //hide keyboard
     }
 }

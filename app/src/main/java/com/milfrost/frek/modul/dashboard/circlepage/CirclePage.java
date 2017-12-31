@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.milfrost.frek.R;
+import com.milfrost.frek.models.Chat;
 import com.milfrost.frek.models.Circle;
 import com.milfrost.frek.models.User;
 import com.milfrost.frek.modul.dashboard.Dashboard;
@@ -128,6 +129,8 @@ public class CirclePage extends Fragment implements CirclePageInterface.ChatFrag
     public void addItemToList(Circle circle) {
         this.circles.add(circle);
     }
+
+
 
     @Override
     public void setList(List<Circle> Circles) {

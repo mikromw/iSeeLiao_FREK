@@ -1,6 +1,7 @@
 package com.milfrost.frek.models;
 
 import com.google.firebase.database.DataSnapshot;
+import com.milfrost.frek.utils.DateParser;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -34,5 +35,19 @@ public class Circle implements Serializable{
 
     public void setChats(Chat[] chats){
         this.chats = chats;
+    }
+
+    public void sortChats(){
+        if(chats!=null){
+            for(int i=0;i<chats.length;i++){
+                for(int j=i+1;j<chats.length;j++){
+                    if(DateParser.getTimeInMillis(chats[i].timestamp)>DateParser.getTimeInMillis(chats[j].timestamp)){
+                        Chat chat= chats[i];
+                        chats[i] = chats[j];
+                        chats[j] = chat;
+                    }
+                }
+            }
+        }
     }
 }

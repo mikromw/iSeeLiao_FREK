@@ -26,7 +26,9 @@ public class CirclePagePresenter {
             ApiRequest.getInstance().getCircles(circleId,new ApiRequest.ServerCallback() {
                 @Override
                 public void onSuccess(Object object) {
-                    viewInterface.addItemToList((Circle)object);
+                    Circle circle = (Circle)object;
+                    circle.sortChats();
+                    viewInterface.addItemToList(circle);
                     viewInterface.notifyAdapter();
                     System.out.println("chat data loaded");
                 }

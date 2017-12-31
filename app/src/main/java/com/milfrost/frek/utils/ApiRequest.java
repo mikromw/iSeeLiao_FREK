@@ -1,6 +1,7 @@
 package com.milfrost.frek.utils;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +30,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 /**
  * Created by ASUS on 27/11/2017.
@@ -380,6 +383,7 @@ public class ApiRequest {
                     public void onSuccess(Object object) {
                         Chat chat = (Chat)object;
                         callback.onSuccess(chat);
+                        Log.d(TAG, "onSuccess: "+chat.content);
                     }
 
                     @Override
