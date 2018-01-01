@@ -1,8 +1,11 @@
 package com.milfrost.frek.modul.dashboard.circlepage;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.milfrost.frek.MyApplication;
+import com.milfrost.frek.models.Chat;
 import com.milfrost.frek.models.Circle;
 import com.milfrost.frek.utils.ApiRequest;
 
@@ -40,4 +43,15 @@ public class CirclePagePresenter {
             });
         }
     }
+
+    public void openInnerChatActivity(Circle circle){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("item",circle);
+        Intent intent = new Intent(context,InnerChatActivity.class);
+        intent.putExtra("bundle",bundle);
+        context.startActivity(intent);
+    }
+
+    //update CircleActivity to show latest Chat
+
 }

@@ -30,7 +30,7 @@ public class ChatFragment extends Fragment {
     List<Circle> circles;
     RecyclerView circleRv;
     CircleAdapter circleAdapter;
-
+    public CirclePage circlePage;
 
     public ChatFragment() {
         // Required empty public constructor

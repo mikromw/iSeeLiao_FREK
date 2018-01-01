@@ -23,8 +23,4 @@ public interface CirclePageInterface {
         void notifyAdapter();
         void resetInputBox();
     }
-
-    interface CircleAdapterWithInnerChat{
-        void updateCircleChat(Chat[] chats,String circleId);
-    }
 }

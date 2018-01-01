@@ -19,6 +19,7 @@ import com.milfrost.frek.models.Circle;
 import com.milfrost.frek.utils.ApiRequest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -31,8 +32,6 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
     ChatAdapter chatAdapter;
     List<Chat> chats;
     int count;
-
-    CirclePageInterface.CircleAdapterWithInnerChat adapterWithInnerChat;
 
     @Override
     protected void onStop() {
@@ -119,6 +118,11 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
     public void setList(List<Chat> chatList) {
         chats.clear();
         chats.addAll(chatList);
+        for(Circle circle:CirclePage.circles){
+            if(circle.key.equals(this.circle.key)) {
+                circle.chats = chats.toArray(new Chat[0]);
+            }
+        }
     }
 
     @Override

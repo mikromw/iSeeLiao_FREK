@@ -37,9 +37,9 @@ public class CirclePage extends Fragment implements CirclePageInterface.ChatFrag
     SectionsPagerAdapter pagerAdapter;
 
     List<Fragment> fragmentList;
-    List<Circle> circles;
+    public static List<Circle> circles;
 
-    CirclePagePresenter circlePagePresenter;
+    public CirclePagePresenter circlePagePresenter;
 
     public CirclePage() {
         // Required empty public constructor
@@ -56,6 +56,15 @@ public class CirclePage extends Fragment implements CirclePageInterface.ChatFrag
         setupEvents();
         pagerAdapter.notifyDataSetChanged();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("Fuck you");
+        if(circles.size()>0){
+            notifyAdapter();
+        }
     }
 
     private void initViews(){
@@ -129,8 +138,6 @@ public class CirclePage extends Fragment implements CirclePageInterface.ChatFrag
     public void addItemToList(Circle circle) {
         this.circles.add(circle);
     }
-
-
 
     @Override
     public void setList(List<Circle> Circles) {
