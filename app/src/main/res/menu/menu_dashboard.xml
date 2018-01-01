@@ -1,13 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.milfrost.frek.modul.dashboard.Dashboard">
+    tools:context="com.milfrost.frek.modul.dashboard.circlepage.InnerChatActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/view_member"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item android:id="@+id/notification_icon"
+        android:title="@string/view_member" />
+    <item
+        android:id="@+id/left_circle"
+        android:orderInCategory="200"
+        android:title="@string/left_circle"/>
+    <item android:id="@+id/add_member"
         android:icon="@drawable/ic_notification_inactive"
-        android:title="@string/notification"/>
+        android:title="@string/add_member"/>
 </menu>

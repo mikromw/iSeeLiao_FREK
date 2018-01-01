@@ -59,6 +59,11 @@
     <string name="amount_comments">%1$d Comments</string>
     <string name="read_more">Read More</string>
 
+    <!-- Chat Fragment-->
+    <string name="add_member">Add Member</string>
+    <string name="view_member">View Member</string>
+    <string name="left_circle">Left Circle</string>
+
     <!-- Error Messages -->
     <string name="wrong_username_pwd">The username or password you have entered is invalid.</string>
     <string name="empty_field_warning">All field(s) should be filled.</string>
@@ -69,8 +74,11 @@
     <!-- Emergency Number -->
     <string name="enter_location">Enter Location name</string>
 
+
     <!-- Messages -->
     <string name="communicating_w_server">Communicating with server</string>
+
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -80,10 +82,34 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
+    private void showAddFriendDialog(){
+
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_dashboard, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.add_member) {
+            return true;
+        }else if(id==R.id.left_circle){
+            return true;
+        }
+        else if(id==R.id.view_member){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setEvents(){
