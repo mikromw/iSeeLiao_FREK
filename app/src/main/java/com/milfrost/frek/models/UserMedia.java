@@ -15,7 +15,9 @@ public class UserMedia implements Serializable {
 
     public UserMedia(DataSnapshot dataSnapshot){
         name = dataSnapshot.child("name").getValue().toString();
-        type = dataSnapshot.child("type").getValue().toString();
+        if(dataSnapshot.child("type").getValue()!=null) {
+            type = dataSnapshot.child("type").getValue().toString();
+        }
         downloadUrl = dataSnapshot.child("url").getValue().toString();
     }
 }

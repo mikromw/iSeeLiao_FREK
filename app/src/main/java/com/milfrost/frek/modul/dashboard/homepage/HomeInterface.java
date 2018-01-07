@@ -12,6 +12,7 @@ public interface HomeInterface {
 
     interface View{
         void notifyAdapter();
+        void addDataToList(Newsfeed newsfeed);
         void setDataList(List<Newsfeed> newsfeedList);
     }
     interface Adapter{

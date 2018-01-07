@@ -1,8 +1,14 @@
 package com.milfrost.frek.modul.dashboard.emergency_number;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.milfrost.frek.R;
 import com.milfrost.frek.models.EmergencyNumber;
+import com.milfrost.frek.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +62,35 @@ public class EmergencyNumberFragment extends Fragment implements EmergencyNumber
 
         emergencyNumberList = new ArrayList<>();
         numberAdapter = new EmergencyNumberAdapter(getContext(),emergencyNumberList);
+        numberAdapter.numberInterface = this;
+
         numberRv.setAdapter(numberAdapter);
         numberRv.setLayoutManager(new LinearLayoutManager(getContext()));
         numberRv.setHasFixedSize(true);
 
         emergencyNumberPresenter.loadData();
+    }
+
+    @Override
+    public void makePhoneCall(String number){
+        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, Constant.REQ_PHONE_CODE);
+        }else{
+            Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+            phoneIntent.setData(Uri.parse("tel:"+number));
+            startActivity(phoneIntent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        System.out.println("Phone permission granted");
+        if(requestCode==Constant.REQ_PHONE_CODE){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+
+                makePhoneCall(numberAdapter.chosenNumber);
+            }
+        }
     }
 
     @Override

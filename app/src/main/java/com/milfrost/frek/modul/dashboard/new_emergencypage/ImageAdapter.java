@@ -7,8 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
+//import com.bumptech.glide.Glide;
 import com.milfrost.frek.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
 
+    int chosenImage;
     Context context;
     List<String> imagePath;
 
@@ -33,15 +35,27 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         String path = imagePath.get(position);
-        holder.chosenImage.setVisibility(View.GONE);
-        Glide.with(context)
+        if(position==chosenImage){
+            holder.chosenImage.setVisibility(View.VISIBLE);
+        }else {
+            holder.chosenImage.setVisibility(View.GONE);
+        }
+        Picasso.with(context)
                 .load(path)
                 .into(holder.imageView);
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(position==0){
+                    //open camera
+                }else if(position==imagePath.size()-1){
+                    //open gallery
+                }else{
+                    chosenImage = position;
+                    notifyDataSetChanged();
+                }
                 holder.chosenImage.setVisibility(View.VISIBLE);
             }
         });

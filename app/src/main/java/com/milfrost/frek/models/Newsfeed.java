@@ -12,19 +12,23 @@ import java.text.SimpleDateFormat;
  */
 
 public class Newsfeed {
+    public String key;
     public String title;
     public String content;
     public String publishDate;
     public User author;
-    public UserMedia media;
+    public String mediaUrl;
+    //public UserMedia media;
     public Comment[] comments;
     public int commentAmount;
 
     public Newsfeed (DataSnapshot dataSnapshot){
-        title = dataSnapshot.child("title").getValue().toString();
+        //title = dataSnapshot.child("title").getValue().toString();
+        key = dataSnapshot.getKey();
         content = dataSnapshot.child("content").getValue().toString();
         publishDate = dataSnapshot.child("datetime").getValue().toString();
         commentAmount = (int)dataSnapshot.child("comments").getChildrenCount();
+        mediaUrl = dataSnapshot.child("media").getValue().toString();
         System.out.println("commentAmount = "+ commentAmount);
     }
 
@@ -35,9 +39,9 @@ public class Newsfeed {
         this.author = author;
     }
 
-    public void setMedia(UserMedia media) {
+    /*public void setMedia(UserMedia media) {
         this.media = media;
-    }
+    }*/
 
     public String getPostingTime(){
         long currentMillis = System.currentTimeMillis();

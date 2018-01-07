@@ -20,10 +20,12 @@ import java.util.List;
 
 public class HomePresenter {
     Context context;
+    List<Newsfeed> newsfeedList;
     HomeInterface.View viewInterface;
 
-    public HomePresenter(Context context){
+    public HomePresenter(Context context,List<Newsfeed> newsfeedList){
         this.context = context;
+        this.newsfeedList =newsfeedList;
     }
 
     public void loadData(){
@@ -38,12 +40,17 @@ public class HomePresenter {
 
             }
         },"vincenttheonardo@gmail.com");*/
-        ApiRequest.getInstance().getNewsList(new ApiRequest.ServerCallback() {
+        ApiRequest.getInstance().getNewsList(true,new ApiRequest.ServerCallback() {
             @Override
             public void onSuccess(Object object) {
                 if(viewInterface!=null){
-                    viewInterface.setDataList((List<Newsfeed>)object);
-                    viewInterface.notifyAdapter();
+                    Newsfeed newsfeed = (Newsfeed)object;
+
+                    //check if newsfeed is already added or not
+                    if(!isExistingInList(newsfeed.key)){
+                        viewInterface.addDataToList((Newsfeed)object);
+                        viewInterface.notifyAdapter();
+                    }
                 }
             }
 
@@ -52,5 +59,13 @@ public class HomePresenter {
 
             }
         });
+    }
+
+    private boolean isExistingInList(String key){
+        for(Newsfeed newsfeed:newsfeedList){
+            if(newsfeed.key.equals(key))
+                return true;
+        }
+        return false;
     }
 }

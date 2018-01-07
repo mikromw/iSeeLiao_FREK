@@ -7,7 +7,7 @@ package com.milfrost.frek.models;
 public class NewsFeedLoadingStatus {
     public boolean isAuthorLoaded = false;
     public boolean isCommentLaoded = false;
-    public boolean isMediaLoaded = false;
+    public boolean isMediaLoaded = true;
 
     public boolean isAllLoaded (){
         return isAuthorLoaded && isCommentLaoded && isMediaLoaded;

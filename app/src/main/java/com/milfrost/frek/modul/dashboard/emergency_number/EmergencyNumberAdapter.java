@@ -19,7 +19,9 @@ import java.util.List;
 
 public class EmergencyNumberAdapter extends RecyclerView.Adapter<EmergencyNumberAdapter.ViewHolder>{
     Context context;
+    String chosenNumber;
     List<EmergencyNumber> emergencyNumberList;
+    EmergencyNumberInterface.View numberInterface;
 
     public EmergencyNumberAdapter(Context context,List<EmergencyNumber> emergencyNumbers){
         this.context = context;
@@ -38,6 +40,14 @@ public class EmergencyNumberAdapter extends RecyclerView.Adapter<EmergencyNumber
         holder.categoryIcon.setImageDrawable(emergencyNumber.getDrawableIcon());
         holder.instancePhoneNumber.setText(emergencyNumber.number);
         holder.instanceName.setText(emergencyNumber.name);
+        holder.phoneIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chosenNumber = emergencyNumber.number;
+                if(numberInterface!=null)
+                    numberInterface.makePhoneCall(emergencyNumber.number);
+            }
+        });
     }
 
     @Override
@@ -46,11 +56,13 @@ public class EmergencyNumberAdapter extends RecyclerView.Adapter<EmergencyNumber
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
+        ImageView phoneIcon;
         ImageView categoryIcon;
         TextView instanceName;
         TextView instancePhoneNumber;
         public ViewHolder(View view){
             super(view);
+            phoneIcon = (ImageView)view.findViewById(R.id.phone_icon);
             categoryIcon = (ImageView)view.findViewById(R.id.ic_emergency_num_category);
             instanceName = (TextView)view.findViewById(R.id.instance_name);
             instancePhoneNumber = (TextView)view.findViewById(R.id.instance_number);

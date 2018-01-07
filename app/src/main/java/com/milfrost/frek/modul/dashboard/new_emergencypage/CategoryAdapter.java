@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+//import com.bumptech.glide.Glide;
 import com.milfrost.frek.R;
 import com.milfrost.frek.models.Category;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
-
+    int chosenCategory=-1;
     Context context;
     List<Category> categoryList;
 
@@ -38,13 +39,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        Category category = categoryList.get(position);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final Category category = categoryList.get(position);
 
-        holder.chosenImage.setVisibility(View.GONE);
+        //holder.chosenImage.setVisibility(View.GONE);
 
         if(category.iconUrl!=null){
-            Glide.with(context)
+            Picasso.with(context)
                     .load(category.iconUrl)
                     .into(holder.categoryImg);
         }
@@ -54,17 +55,25 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             txtBg.setColor(Color.parseColor(category.backgroundColor));
         }catch (Exception e){}
         holder.categoryCaption.setText(category.name);
-
+        if(chosenCategory==position){
+            holder.chosenImage.setVisibility(View.VISIBLE);
+        }else{
+            holder.chosenImage.setVisibility(View.GONE);
+        }
         holder.categoryImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.chosenImage.setVisibility(View.VISIBLE);
+                chosenCategory = position;
+                notifyDataSetChanged();
+                //holder.chosenImage.setVisibility(View.VISIBLE);
             }
         });
         holder.chosenImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.chosenImage.setVisibility(View.GONE);
+                chosenCategory = -1;
+                notifyDataSetChanged();
+                //holder.chosenImage.setVisibility(View.GONE);
             }
         });
     }

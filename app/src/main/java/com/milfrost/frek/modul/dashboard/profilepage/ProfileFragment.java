@@ -11,10 +11,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+//import com.bumptech.glide.Glide;
 import com.milfrost.frek.R;
 import com.milfrost.frek.modul.dashboard.profilepage.ChangePasswordPage.ChangePasswordActivity;
 import com.milfrost.frek.modul.dashboard.profilepage.EditProfilePage.EditProfileActivity;
+import com.milfrost.frek.modul.loginPage.LoginPage;
+import com.milfrost.frek.utils.ApiRequest;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -113,7 +116,10 @@ public class ProfileFragment extends Fragment implements ProfileFragmentInterfac
     }
 
     private void logOut(){
-
+        ApiRequest.getInstance().signOut();
+        Intent intent = new Intent(getActivity(), LoginPage.class);
+        getActivity().startActivity(intent);
+        getActivity().finish();
     }
 
     private void openEditProfile(){
@@ -135,14 +141,14 @@ public class ProfileFragment extends Fragment implements ProfileFragmentInterfac
 
     @Override
     public void updateUserProfile(String url) {
-        Glide.with(getContext())
+        Picasso.with(getContext())
                 .load(url)
                 .into(userProfile);
     }
 
     @Override
     public void updateCover(String url) {
-        Glide.with(getContext())
+        Picasso.with(getContext())
                 .load(url)
                 .into(cover);
     }

@@ -1,7 +1,10 @@
 package com.milfrost.frek.modul.dashboard.circlepage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +16,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.milfrost.frek.R;
@@ -34,6 +39,8 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
     ChatAdapter chatAdapter;
     List<Chat> chats;
     int count;
+
+
 
     @Override
     protected void onStop() {
@@ -75,6 +82,8 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         sendBtn = (ImageView)findViewById(R.id.send_btn);
         textBox = (EditText)findViewById(R.id.chat_message_textbox);
 
+
+
         toolbar.setTitle(circle.name);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(toolbar);
@@ -109,6 +118,12 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         else if(id==R.id.view_member){
             return true;
         }
+        else if(id==R.id.view_locations){
+            Bundle bundle = new Bundle();
+            Intent intent = new Intent(this,MapLocationActivity.class);
+            intent.putExtra("circle",circle);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -121,6 +136,7 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
                 }
             }
         });
+
     }
 
     private void initObjects(){
@@ -144,7 +160,7 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
     public void setList(List<Chat> chatList) {
         chats.clear();
         chats.addAll(chatList);
-        for(Circle circle:CirclePage.circles){
+        for(Circle circle:ChatFragment.circles){
             if(circle.key.equals(this.circle.key)) {
                 circle.chats = chats.toArray(new Chat[0]);
             }

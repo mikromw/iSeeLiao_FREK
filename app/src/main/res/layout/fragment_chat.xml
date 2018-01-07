@@ -1,14 +1,102 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="15dp"
     tools:context="com.milfrost.frek.modul.dashboard.circlepage.ChatFragment">
 
     <android.support.v7.widget.RecyclerView
+        android:padding="15dp"
         android:id="@+id/circle_rv"
-        android:layout_marginTop="80dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/fab_add_circle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|right"
+        android:src="@drawable/ic_plus"
+        android:tint="@color/white"
+        android:padding="10dp"
+        android:background="@drawable/blue_circle"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"/>
 
+    <LinearLayout
+        android:animateLayoutChanges="true"
+        android:id="@+id/new_circle_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#55000000">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="30dp"
+            app:cardCornerRadius="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:orientation="horizontal"
+                    android:background="@color/colorPrimary">
+                    <TextView
+                        style="@style/bold_font"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="center|left"
+                        android:textColor="@color/white"
+                        android:text="Create Circle"/>
+                    <ImageView
+                        android:id="@+id/close_btn"
+                        android:layout_gravity="center"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:tint="@color/white"
+                        android:rotation="45"
+                        android:src="@drawable/ic_plus"/>
+                </LinearLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/group_ic"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/ic_group"
+                    android:layout_gravity="center"/>
+
+                <EditText
+                    android:id="@+id/circle_name_field"
+                    android:textSize="@dimen/t5"
+                    android:gravity="center"
+                    android:inputType="textPersonName"
+                    android:hint="Enter your Circle Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/box_w_grey_stroke"/>
+
+                <TextView
+                    android:id="@+id/btn_create_circle"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    style="@style/bold_font"
+                    android:textAllCaps="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/rounded_blue_btn"
+                    android:text="Create Circle"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
 </FrameLayout>

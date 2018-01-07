@@ -50,12 +50,11 @@ public class HomeFragment extends Fragment implements HomeInterface.View{
         rvNews = (RecyclerView)view.findViewById(R.id.rv_news);
     }
     private void initObjects() {
-        if(homePresenter==null)
-            homePresenter = new HomePresenter(getContext());
-
         if(newsList ==null)
             newsList = new ArrayList<>();
 
+        if(homePresenter==null)
+            homePresenter = new HomePresenter(getContext(),newsList);
 
         newsAdapter = new NewsAdapter(getContext(), newsList);
         rvNews.setAdapter(newsAdapter);
@@ -75,6 +74,11 @@ public class HomeFragment extends Fragment implements HomeInterface.View{
     @Override
     public void notifyAdapter() {
         newsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void addDataToList(Newsfeed newsfeed) {
+        newsList.add(0,newsfeed);
     }
 
     @Override

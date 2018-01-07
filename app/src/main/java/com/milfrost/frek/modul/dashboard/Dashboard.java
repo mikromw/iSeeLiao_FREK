@@ -1,8 +1,13 @@
 package com.milfrost.frek.modul.dashboard;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -15,12 +20,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.milfrost.frek.R;
+import com.milfrost.frek.modul.dashboard.circlepage.ChatFragment;
 import com.milfrost.frek.modul.dashboard.circlepage.CirclePage;
 import com.milfrost.frek.modul.dashboard.emergency_number.EmergencyNumberFragment;
 import com.milfrost.frek.modul.dashboard.first_aid_page.FirstAidFragment;
 import com.milfrost.frek.modul.dashboard.homepage.HomeFragment;
 import com.milfrost.frek.modul.dashboard.new_emergencypage.NewEmergencyActivity;
 import com.milfrost.frek.modul.dashboard.profilepage.ProfileFragment;
+import com.milfrost.frek.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +99,7 @@ public class Dashboard extends AppCompatActivity {
         fragmentList = new ArrayList<>();
 
         fragmentList.add(new EmergencyNumberFragment());
-        fragmentList.add(new CirclePage());
+        fragmentList.add(new ChatFragment());
         fragmentList.add(new HomeFragment());
         fragmentList.add(new FirstAidFragment());
         fragmentList.add(new ProfileFragment());
@@ -127,6 +134,14 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
+    public void startPhoneCall(String phoneNumber){
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+    }
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

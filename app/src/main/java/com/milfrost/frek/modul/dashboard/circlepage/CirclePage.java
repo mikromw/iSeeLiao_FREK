@@ -61,7 +61,6 @@ public class CirclePage extends Fragment implements CirclePageInterface.ChatFrag
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Fuck you");
         if(circles.size()>0){
             notifyAdapter();
         }

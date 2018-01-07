@@ -12,6 +12,7 @@ public interface EmergencyNumberInterface {
 
     interface View{
         void setList(List<EmergencyNumber> emergencyNumberList);
+        void makePhoneCall(String phoneNumber);
         void notifyAdapter();
     }
 }

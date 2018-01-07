@@ -1,10 +1,16 @@
 package com.milfrost.frek.utils;
 
+import android.content.ContentResolver;
+import android.location.Location;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,6 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.milfrost.frek.MyApplication;
 import com.milfrost.frek.models.Chat;
 import com.milfrost.frek.models.Circle;
@@ -41,6 +50,8 @@ public class ApiRequest {
 
     private static ApiRequest apiRequest;
     FirebaseAuth mAuth;
+    FirebaseStorage storage;
+    StorageReference storageReference;
     DatabaseReference databaseReference;
 
     public interface ServerCallback{
@@ -51,6 +62,8 @@ public class ApiRequest {
     public ApiRequest(){
         mAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
     }
 
     public static ApiRequest getInstance(){
@@ -74,6 +87,130 @@ public class ApiRequest {
         });
     }
 
+    public void getNewsList(boolean isContinuous, final ServerCallback serverCallback){
+        final NewsFeedLoadingStatus loadingStatus = new NewsFeedLoadingStatus();
+        databaseReference.child("newsfeed").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                final DataSnapshot newsfeedData = dataSnapshot;
+                final Newsfeed newsfeed = new Newsfeed(newsfeedData);
+
+                //Load User data
+                int storedAuthorPos = MyApplication.getInstance().isUserExistInList(newsfeedData.child("author").getValue().toString());
+
+                //if author is not stored, fetch data
+                if(storedAuthorPos == -1){
+                    ApiRequest.getInstance().getUserInformation(new ServerCallback() {
+                        @Override
+                        public void onSuccess(Object object) {
+                            User user = (User)object;
+                            System.out.println("Name = "+user.getName());
+                            newsfeed.setAuthor(user);
+                            MyApplication.getInstance().addUserToList(user);
+                            loadingStatus.isAuthorLoaded = true;
+                            if(loadingStatus.isAllLoaded()){
+                                serverCallback.onSuccess(newsfeed);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Object object) {
+
+                        }
+                    },newsfeedData.child("author").getValue().toString());
+                }else{
+                    newsfeed.author = MyApplication.getInstance().userList.get(storedAuthorPos);
+                    loadingStatus.isAuthorLoaded = true;
+                    if(loadingStatus.isAllLoaded()){
+                        serverCallback.onSuccess(newsfeed);
+                    }
+                }
+
+
+                //Load media from data above
+                /*if(!TextUtils.isEmpty(newsfeedData.child("media").getValue().toString())) {
+
+                    ApiRequest.getInstance().getMediaFromUrl(new ApiRequest.ServerCallback() {
+                        @Override
+                        public void onSuccess(Object object) {
+                            UserMedia userMedia = (UserMedia) object;
+                            newsfeed.setMedia(userMedia);
+                            System.out.println("Newskey = "+newsfeedData.getKey()+";Media = "+newsfeedData.child("media").getValue().toString());
+                            loadingStatus.isMediaLoaded = true;
+                            if(loadingStatus.isAllLoaded()){
+                                serverCallback.onSuccess(newsfeed);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Object object) {
+
+                        }
+                    }, newsfeedData.child("media").getValue().toString());
+                }else{
+                    loadingStatus.isMediaLoaded = true;
+                    if(loadingStatus.isAllLoaded()){
+                        serverCallback.onSuccess(newsfeed);
+                    }
+                }*/
+
+                //Load comments from data above
+                if(newsfeedData.child("comments").getValue().toString().equals("")){
+                    loadingStatus.isCommentLaoded = true;
+                    if(loadingStatus.isAllLoaded()){
+                        serverCallback.onSuccess(newsfeed);
+                    }
+                }else {
+                    Iterator commentIterator = newsfeedData.child("comments").getChildren().iterator();
+                    final List<Comment> commentList = new ArrayList<Comment>();
+                    while (commentIterator.hasNext()) {
+                        DataSnapshot commentData = (DataSnapshot) commentIterator.next();
+                        ApiRequest.getInstance().loadComment(commentData.getKey(), new ApiRequest.ServerCallback() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                Comment comment = (Comment) object;
+                                commentList.add(comment);
+                                if (commentList.size() == newsfeedData.child("comments").getChildrenCount()) {
+                                    loadingStatus.isCommentLaoded = true;
+                                    newsfeed.setComments(commentList.toArray(new Comment[0]));
+                                }
+                                if(loadingStatus.isAllLoaded()){
+                                    serverCallback.onSuccess(newsfeed);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Object object) {
+
+                            }
+                        });
+                    }
+
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void getNewsList (final ServerCallback serverCallback){
         final NewsFeedLoadingStatus loadingStatus = new NewsFeedLoadingStatus();
         databaseReference.child("newsfeed").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -84,98 +221,7 @@ public class ApiRequest {
                 Iterator i = dataSnapshot.getChildren().iterator();
                 while (i.hasNext()){
                     final DataSnapshot newsfeedData = (DataSnapshot)i.next();
-                    final Newsfeed newsfeed = new Newsfeed(newsfeedData);
 
-                    //Load User data
-                    int storedAuthorPos = MyApplication.getInstance().isUserExistInList(newsfeedData.child("author").getValue().toString());
-
-                    //if author is not stored, fetch data
-                    if(storedAuthorPos == -1){
-                        ApiRequest.getInstance().getUserInformation(new ServerCallback() {
-                            @Override
-                            public void onSuccess(Object object) {
-                                User user = (User)object;
-                                System.out.println("Name = "+user.getName());
-                                newsfeed.setAuthor(user);
-                                MyApplication.getInstance().addUserToList(user);
-                                loadingStatus.isAuthorLoaded = true;
-                                if(loadingStatus.isAllLoaded()){
-                                    serverCallback.onSuccess(newsfeedList);
-                                }
-                            }
-
-                            @Override
-                            public void onError(Object object) {
-
-                            }
-                        },newsfeedData.child("author").getValue().toString());
-                    }else{
-                        newsfeed.author = MyApplication.getInstance().userList.get(storedAuthorPos);
-                        loadingStatus.isAuthorLoaded = true;
-                        if(loadingStatus.isAllLoaded()){
-                            serverCallback.onSuccess(newsfeedList);
-                        }
-                    }
-
-
-                    //Load media from data above
-                    if(!newsfeedData.child("media").getValue().toString().equals("")) {
-                        ApiRequest.getInstance().getMediaFromUrl(new ApiRequest.ServerCallback() {
-                            @Override
-                            public void onSuccess(Object object) {
-                                UserMedia userMedia = (UserMedia) object;
-                                newsfeed.setMedia(userMedia);
-                                loadingStatus.isMediaLoaded = true;
-                                if(loadingStatus.isAllLoaded()){
-                                    serverCallback.onSuccess(newsfeedList);
-                                }
-                            }
-
-                            @Override
-                            public void onError(Object object) {
-
-                            }
-                        }, newsfeedData.child("media").getValue().toString());
-                    }else{
-                        loadingStatus.isMediaLoaded = true;
-                        if(loadingStatus.isAllLoaded()){
-                            serverCallback.onSuccess(newsfeedList);
-                        }
-                    }
-
-                    //Load comments from data above
-                    if(newsfeedData.child("comments").getValue().toString().equals("")){
-                        loadingStatus.isCommentLaoded = true;
-                        if(loadingStatus.isAllLoaded()){
-                            serverCallback.onSuccess(newsfeedList);
-                        }
-                    }else {
-                        Iterator commentIterator = newsfeedData.child("comments").getChildren().iterator();
-                        final List<Comment> commentList = new ArrayList<Comment>();
-                        while (commentIterator.hasNext()) {
-                            DataSnapshot commentData = (DataSnapshot) commentIterator.next();
-                            ApiRequest.getInstance().loadComment(commentData.getKey(), new ApiRequest.ServerCallback() {
-                                @Override
-                                public void onSuccess(Object object) {
-                                    Comment comment = (Comment) object;
-                                    commentList.add(comment);
-                                    if (commentList.size() == newsfeedData.child("comments").getChildrenCount()) {
-                                        loadingStatus.isCommentLaoded = true;
-                                    }
-                                    if(loadingStatus.isAllLoaded()){
-                                        serverCallback.onSuccess(newsfeedList);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(Object object) {
-
-                                }
-                            });
-                        }
-                        newsfeed.setComments(commentList.toArray(new Comment[0]));
-                    }
-                    newsfeedList.add(newsfeed);
                 }
             }
 
@@ -424,6 +470,99 @@ public class ApiRequest {
 
         databaseReference.child("chats").child(key).setValue(map);
         databaseReference.child("circles").child(circleId).child("chats").child(key).setValue(1);
+    }
+
+    public void uploadImage(String imagePath, Uri uri, final ServerCallback callback){
+        StorageReference imageRef = storageReference.child(imagePath+"/"+uri.getLastPathSegment());
+        UploadTask uploadTask = imageRef.putFile(uri);
+
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                callback.onError(null);
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                callback.onSuccess(downloadUrl);
+            }
+        });
+    }
+    public void postNewsfeed(Uri uri, String content, String category, Location location, final ServerCallback callback){
+        final DatabaseReference newsRef = databaseReference.child("newsfeed");
+        final String newsKey = newsRef.push().getKey();
+        final HashMap<String,Object> newsMap = new HashMap<>();
+        HashMap<String,Object> locationMap = new HashMap<>();
+        locationMap.put("latitude",location.getLatitude());
+        locationMap.put("longitude",location.getLongitude());
+        newsMap.put("author",MyApplication.getInstance().loggedUser.getEmailAddress());
+        newsMap.put("comments","");
+        newsMap.put("category",category);
+        newsMap.put("content",content);
+        newsMap.put("datetime",DateParser.getCurrentTimeInString());
+        newsMap.put("verified",0);
+        newsMap.put("location",locationMap);
+
+        if(uri!=null) {
+            /*final DatabaseReference mediaRef = databaseReference.child("media");
+            final String mediaKey = mediaRef.push().getKey();
+
+            final HashMap<String,Object> mediaMap = new HashMap<>();
+            ContentResolver contentResolver = MyApplication.getInstance().getContentResolver();
+            mediaMap.put("name",uri.getLastPathSegment());
+            mediaMap.put("type",contentResolver.getType(uri));*/
+
+            //upload the image to cloud storage
+            uploadImage("newsfeed", uri, new ServerCallback() {
+                @Override
+                public void onSuccess(Object object) {
+                    /*mediaMap.put("url",((Uri)object).toString());
+                    mediaRef.child(mediaKey).setValue(mediaMap);*/
+                    newsMap.put("media",((Uri)object).toString());
+                    newsRef.child(newsKey).setValue(newsMap);
+                    callback.onSuccess(null);
+                }
+
+                @Override
+                public void onError(Object object) {
+                    callback.onError(null);
+                }
+            });
+        }
+        else{
+            newsMap.put("media","");
+            newsRef.child(newsKey).setValue(newsMap);
+            callback.onSuccess("OK");
+        }
+
+
+
+    }
+
+    public void signOut(){
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    public void createNewCircle(String circleName){
+        DatabaseReference circleRef = databaseReference.child("circle");
+        String circleKey = circleRef.push().getKey();
+
+        HashMap<String,Object> membersMap = new HashMap<>();
+        membersMap.put(MyApplication.getInstance().loggedUser.getEmailAddress(),"1");
+
+        HashMap<String,Object> circleMap = new HashMap<>();
+        circleMap.put("name",circleName);
+        circleMap.put("date_created",DateParser.getCurrentTimeInString());
+        circleMap.put("chats","");
+        circleMap.put("members",membersMap);
+
+        DatabaseReference userRef = databaseReference.child("users").child(MyApplication.getInstance().loggedUser.getEmailAddress().replace(".",","));
+        userRef.child("circle").child(circleKey).setValue(1);
+
+
+
+
     }
 
 }

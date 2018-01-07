@@ -9,10 +9,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+//import com.bumptech.glide.Glide;
 import com.milfrost.frek.R;
 import com.milfrost.frek.models.FirstAidTutorial;
 import com.milfrost.frek.models.TutorialStep;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class FirstAidAdapter extends RecyclerView.Adapter<FirstAidAdapter.ViewHo
         holder.title.setText(firstAidTutorial.title);
         holder.spoiler.setText(firstAidTutorial.content);
         if(firstAidTutorial.coverUrl!=null) {
-            Glide.with(context)
+            Picasso.with(context)
                     .load(firstAidTutorial.coverUrl)
                     .into(holder.tutorialCover);
         }

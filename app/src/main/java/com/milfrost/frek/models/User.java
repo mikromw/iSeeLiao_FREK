@@ -17,11 +17,14 @@ public class User implements Serializable{
     private String name;
     private String emailAddress;
     private String mobileNumber;
-    private transient LatLng latLng;
+    //private transient LatLng latLng;
+    private double latitude;
+    private double longitude;
     private UserMedia profile;
     private List<String> circleId;
 
     public User(DataSnapshot dataSnapshot){
+        System.out.println("Data snapshot fucka "+dataSnapshot.toString());
         circleId = new ArrayList<>();
 
         name = dataSnapshot.child("full_name").getValue().toString();
@@ -32,14 +35,15 @@ public class User implements Serializable{
             DataSnapshot data = (DataSnapshot) iterator.next();
             circleId.add(data.getKey().toString());
         }
-        latLng = new LatLng(Double.parseDouble(dataSnapshot.child("position").child("Latitude").getValue().toString())
-                ,Double.parseDouble(dataSnapshot.child("position").child("Longitude").getValue().toString()));
+        latitude =Double.parseDouble(dataSnapshot.child("position").child("Latitude").getValue().toString());
+        longitude=Double.parseDouble(dataSnapshot.child("position").child("Longitude").getValue().toString());
+
     }
 
-    public User(String name,LatLng latLng){
+    /*public User(String name,LatLng latLng){
         this.name = name;
         this.latLng = latLng;
-    }
+    }*/
 
     public String getEmailAddress() {
         return emailAddress;
@@ -52,7 +56,7 @@ public class User implements Serializable{
     }
 
     public LatLng getLatLng() {
-        return latLng;
+        return new LatLng(latitude,longitude);
     }
 
     public UserMedia getProfile() {

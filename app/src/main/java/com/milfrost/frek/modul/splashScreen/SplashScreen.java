@@ -1,5 +1,6 @@
 package com.milfrost.frek.modul.splashScreen;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -37,6 +38,7 @@ public class SplashScreen extends AppCompatActivity {
         List<String> permissionList = new ArrayList<String>();
         permissionList.add( android.Manifest.permission.READ_EXTERNAL_STORAGE);
         permissionList.add( android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        permissionList.add( Manifest.permission.ACCESS_FINE_LOCATION);
         permissionList.add( android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         permissionList.add( android.Manifest.permission.READ_CONTACTS);
         /*ActivityCompat.requestPermissions(this,new String[]{

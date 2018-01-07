@@ -14,9 +14,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.milfrost.frek.R;
 import com.milfrost.frek.models.Newsfeed;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -53,6 +53,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Newsfeed newsfeed = newsList.get(position);
 
+        /*if(newsfeed.media==null){
+            System.out.println("Media null for newsfeed "+newsfeed.key);
+        }else{
+            System.out.println("Media = "+newsfeed.media+" for newsfeed "+newsfeed.key);
+        }*/
+
         //populate data
         holder.name.setText(newsfeed.author.getName());
         holder.postingTime.setText(newsfeed.getPostingTime());
@@ -72,9 +78,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             }
         });
         holder.comment.setText(newsfeed.getCommentAmount());
-        if(newsfeed.media!=null){
-            Glide.with(context)
-                    .load(newsfeed.media.downloadUrl)
+        if(newsfeed.mediaUrl!=null){
+            Picasso.with(context)
+                    .load(newsfeed.mediaUrl)
                     .into(holder.media);
         }else{
             holder.media.setVisibility(View.GONE);

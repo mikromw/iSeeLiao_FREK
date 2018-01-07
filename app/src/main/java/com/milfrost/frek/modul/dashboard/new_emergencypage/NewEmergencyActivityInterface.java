@@ -1,5 +1,7 @@
 package com.milfrost.frek.modul.dashboard.new_emergencypage;
 
+import android.location.Location;
+
 import com.milfrost.frek.models.Category;
 
 import java.util.List;
@@ -14,5 +16,13 @@ public interface NewEmergencyActivityInterface {
         void setImageList(List<String> imagePath);
         void notifyCategoryAdapter();
         void notifyImageAdapter();
+    }
+    interface LocationCallback{
+        void onLocationRetrieved(Location location);
+        void onFail(Object obj);
+    }
+    interface ImageAdapterCommunication{
+        void openCamera();
+        void openGallery();
     }
 }

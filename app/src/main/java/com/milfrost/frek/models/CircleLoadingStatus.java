@@ -8,6 +8,11 @@ public class CircleLoadingStatus {
     public boolean isUserLoaded = false;
     public boolean isChatLoaded = false;
 
+    public CircleLoadingStatus(){
+        isUserLoaded = false;
+        isChatLoaded = false;
+    }
+
     public boolean isAllLoaded(){
         return isChatLoaded&&isUserLoaded;
     }
