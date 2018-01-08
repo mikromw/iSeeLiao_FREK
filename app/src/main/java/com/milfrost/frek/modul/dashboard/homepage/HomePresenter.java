@@ -40,9 +40,9 @@ public class HomePresenter {
 
             }
         },"vincenttheonardo@gmail.com");*/
-        ApiRequest.getInstance().getNewsList(true,new ApiRequest.ServerCallback() {
+        ApiRequest.getInstance().getNewsList(true, new ApiRequest.RealTimeServerCallback() {
             @Override
-            public void onSuccess(Object object) {
+            public void onNewData(Object object) {
                 if(viewInterface!=null){
                     Newsfeed newsfeed = (Newsfeed)object;
 
@@ -55,7 +55,24 @@ public class HomePresenter {
             }
 
             @Override
-            public void onError(Object object) {
+            public void onDataChanged(Object object) {
+
+                if(viewInterface!=null){
+                    Newsfeed newsfeed = (Newsfeed)object;
+                    System.out.println("data changed = "+newsfeed.content);
+                    //check if newsfeed is already added or not
+                    viewInterface.updateNewsfeedData((Newsfeed)object);
+                    viewInterface.notifyAdapter();
+                }
+            }
+
+            @Override
+            public void onDataRemoved(Object object) {
+
+            }
+
+            @Override
+            public void onCancelled(Object object) {
 
             }
         });

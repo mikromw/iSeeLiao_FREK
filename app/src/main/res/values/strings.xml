@@ -58,6 +58,8 @@
     <string name="amount_comment">%1$d Comment</string>
     <string name="amount_comments">%1$d Comments</string>
     <string name="read_more">Read More</string>
+    <string name="empty_comment_msg">No comment yet.\n Start by posting yours.</string>
+    <string name="write_a_comment">Write a Comment</string>
 
     <!-- Chat Fragment-->
     <string name="add_member">Add Member</string>

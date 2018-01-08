@@ -1,5 +1,6 @@
 package com.milfrost.frek.modul.dashboard.homepage;
 
+import com.milfrost.frek.models.Comment;
 import com.milfrost.frek.models.Newsfeed;
 
 import java.util.List;
@@ -14,6 +15,8 @@ public interface HomeInterface {
         void notifyAdapter();
         void addDataToList(Newsfeed newsfeed);
         void setDataList(List<Newsfeed> newsfeedList);
+        void updateNewsfeedData(Newsfeed newsfeed);
+        void showCommentDetails(List<Comment> commentList);
     }
     interface Adapter{
 

@@ -15,9 +15,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.milfrost.frek.R;
+import com.milfrost.frek.models.Comment;
 import com.milfrost.frek.models.Newsfeed;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -30,6 +33,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     Context context;
     List<Newsfeed> newsList;
+    HomeInterface.View viewInterface;
+    String selectedNewsfeedId ="";
+    int selectedPosition = -1;
 
     public NewsAdapter(Context context, List<Newsfeed> newsList){
         this.context = context;
@@ -50,7 +56,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Newsfeed newsfeed = newsList.get(position);
 
         /*if(newsfeed.media==null){
@@ -78,6 +84,23 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             }
         });
         holder.comment.setText(newsfeed.getCommentAmount());
+        holder.comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(viewInterface!=null) {
+                    selectedNewsfeedId = newsfeed.key;
+                    selectedPosition = position;
+                    if(newsfeed.comments!=null) {
+                        List<Comment> commentList = new ArrayList<Comment>();
+                        commentList.addAll(Arrays.asList(newsfeed.comments));
+                        viewInterface.showCommentDetails(commentList);
+                    }
+                    else {
+                        viewInterface.showCommentDetails(null);
+                    }
+                }
+            }
+        });
         if(newsfeed.mediaUrl!=null){
             Picasso.with(context)
                     .load(newsfeed.mediaUrl)

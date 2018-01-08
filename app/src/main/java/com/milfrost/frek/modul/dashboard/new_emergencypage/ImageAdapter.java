@@ -8,9 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 //import com.bumptech.glide.Glide;
+import com.bumptech.glide.Glide;
 import com.milfrost.frek.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -42,7 +44,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
         }else {
             holder.chosenImage.setVisibility(View.GONE);
         }
-        Picasso.with(context)
+        Glide.with(context)
                 .load(path)
                 .into(holder.imageView);
         holder.imageView.setOnClickListener(new View.OnClickListener() {

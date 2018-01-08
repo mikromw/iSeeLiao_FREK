@@ -59,6 +59,13 @@ public class ApiRequest {
         void onError(Object object);
     }
 
+    public interface RealTimeServerCallback{
+        void onNewData(Object object);
+        void onDataChanged(Object object);
+        void onDataRemoved(Object object);
+        void onCancelled(Object object);
+    }
+
     public ApiRequest(){
         mAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -87,11 +94,12 @@ public class ApiRequest {
         });
     }
 
-    public void getNewsList(boolean isContinuous, final ServerCallback serverCallback){
-        final NewsFeedLoadingStatus loadingStatus = new NewsFeedLoadingStatus();
+    public void getNewsList(boolean isContinuous, final RealTimeServerCallback serverCallback){
+
         databaseReference.child("newsfeed").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                final NewsFeedLoadingStatus loadingStatus = new NewsFeedLoadingStatus();
                 final DataSnapshot newsfeedData = dataSnapshot;
                 final Newsfeed newsfeed = new Newsfeed(newsfeedData);
 
@@ -109,7 +117,7 @@ public class ApiRequest {
                             MyApplication.getInstance().addUserToList(user);
                             loadingStatus.isAuthorLoaded = true;
                             if(loadingStatus.isAllLoaded()){
-                                serverCallback.onSuccess(newsfeed);
+                                serverCallback.onNewData(newsfeed);
                             }
                         }
 
@@ -122,7 +130,7 @@ public class ApiRequest {
                     newsfeed.author = MyApplication.getInstance().userList.get(storedAuthorPos);
                     loadingStatus.isAuthorLoaded = true;
                     if(loadingStatus.isAllLoaded()){
-                        serverCallback.onSuccess(newsfeed);
+                        serverCallback.onNewData(newsfeed);
                     }
                 }
 
@@ -158,7 +166,7 @@ public class ApiRequest {
                 if(newsfeedData.child("comments").getValue().toString().equals("")){
                     loadingStatus.isCommentLaoded = true;
                     if(loadingStatus.isAllLoaded()){
-                        serverCallback.onSuccess(newsfeed);
+                        serverCallback.onNewData(newsfeed);
                     }
                 }else {
                     Iterator commentIterator = newsfeedData.child("comments").getChildren().iterator();
@@ -175,7 +183,7 @@ public class ApiRequest {
                                     newsfeed.setComments(commentList.toArray(new Comment[0]));
                                 }
                                 if(loadingStatus.isAllLoaded()){
-                                    serverCallback.onSuccess(newsfeed);
+                                    serverCallback.onNewData(newsfeed);
                                 }
                             }
 
@@ -191,12 +199,79 @@ public class ApiRequest {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                final NewsFeedLoadingStatus loadingStatus = new NewsFeedLoadingStatus();
+                final DataSnapshot newsfeedData = dataSnapshot;
+                final Newsfeed newsfeed = new Newsfeed(newsfeedData);
 
+                //Load User data
+                int storedAuthorPos = MyApplication.getInstance().isUserExistInList(newsfeedData.child("author").getValue().toString());
+
+                //if author is not stored, fetch data
+                if(storedAuthorPos == -1){
+                    ApiRequest.getInstance().getUserInformation(new ServerCallback() {
+                        @Override
+                        public void onSuccess(Object object) {
+                            User user = (User)object;
+                            System.out.println("Name = "+user.getName());
+                            newsfeed.setAuthor(user);
+                            MyApplication.getInstance().addUserToList(user);
+                            loadingStatus.isAuthorLoaded = true;
+                            if(loadingStatus.isAllLoaded()){
+                                serverCallback.onDataChanged(newsfeed);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Object object) {
+
+                        }
+                    },newsfeedData.child("author").getValue().toString());
+                }else {
+                    newsfeed.author = MyApplication.getInstance().userList.get(storedAuthorPos);
+                    loadingStatus.isAuthorLoaded = true;
+                    if (loadingStatus.isAllLoaded()) {
+                        serverCallback.onDataChanged(newsfeed);
+                    }
+                }
+
+                //Load comments from data above
+                if(newsfeedData.child("comments").getValue().toString().equals("")){
+                    loadingStatus.isCommentLaoded = true;
+                    if(loadingStatus.isAllLoaded()){
+                        serverCallback.onDataChanged(newsfeed);
+                    }
+                }else {
+                    Iterator commentIterator = newsfeedData.child("comments").getChildren().iterator();
+                    final List<Comment> commentList = new ArrayList<Comment>();
+                    while (commentIterator.hasNext()) {
+                        DataSnapshot commentData = (DataSnapshot) commentIterator.next();
+                        ApiRequest.getInstance().loadComment(commentData.getKey(), new ApiRequest.ServerCallback() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                Comment comment = (Comment) object;
+                                commentList.add(comment);
+                                if (commentList.size() == newsfeedData.child("comments").getChildrenCount()) {
+                                    loadingStatus.isCommentLaoded = true;
+                                    newsfeed.setComments(commentList.toArray(new Comment[0]));
+                                }
+                                if(loadingStatus.isAllLoaded()){
+                                    serverCallback.onDataChanged(newsfeed);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Object object) {
+
+                            }
+                        });
+                    }
+
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                serverCallback.onDataRemoved(dataSnapshot.getKey());
             }
 
             @Override
@@ -560,9 +635,22 @@ public class ApiRequest {
         DatabaseReference userRef = databaseReference.child("users").child(MyApplication.getInstance().loggedUser.getEmailAddress().replace(".",","));
         userRef.child("circle").child(circleKey).setValue(1);
 
+    }
+    public void sendComment(String circleId,String commentContent, ServerCallback callback){
+        DatabaseReference newsCommentRef = databaseReference.child("newsfeed").child(circleId).child("comments");
+        DatabaseReference commentRef = databaseReference.child("comments");
 
+        String commentKey = commentRef.push().getKey();
+        HashMap<String,Object> commentMap =  new HashMap<>();
+        commentMap.put("author",MyApplication.getInstance().loggedUser.getEmailAddress());
+        commentMap.put("content",commentContent);
+        commentMap.put("datetime",DateParser.getCurrentTimeInString());
+        commentMap.put("show",1);
 
+        commentRef.child(commentKey).setValue(commentMap);
+        newsCommentRef.child(commentKey).setValue(1);
 
+        callback.onSuccess(null);
     }
 
 }

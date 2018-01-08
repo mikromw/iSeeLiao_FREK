@@ -56,6 +56,15 @@ public class MyApplication extends Application {
         return -1;
     }
 
+    public User getUserFromList(String email){
+        for(User user:userList){
+            if(user.getEmailAddress().equals(email)){
+                return user;
+            }
+        }
+        return null;
+    }
+
     public void addUserToList(User user){
         userList.add(user);
     }
