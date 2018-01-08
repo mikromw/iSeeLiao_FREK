@@ -51,7 +51,8 @@
         <activity
             android:name=".modul.dashboard.circlepage.MapLocationActivity"
             android:label="@string/title_activity_map_location"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".modul.dashboard.first_aid_page.TutorialDetailsActivity"></activity>
     </application>
 
 </manifest>

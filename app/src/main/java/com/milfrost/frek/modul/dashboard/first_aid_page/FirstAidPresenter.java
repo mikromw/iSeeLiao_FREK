@@ -3,6 +3,8 @@ package com.milfrost.frek.modul.dashboard.first_aid_page;
 import android.content.Context;
 
 import com.milfrost.frek.models.FirstAidTutorial;
+import com.milfrost.frek.models.TutorialStep;
+import com.milfrost.frek.utils.ApiRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,25 +23,45 @@ public class FirstAidPresenter {
 
     public void loadData(){
         //dummy data
-        List<FirstAidTutorial> tutorialList = new ArrayList<>();
-        tutorialList.add( new FirstAidTutorial("How to do CPR?","CPR is one of the most important action that everyone should have learnt."));
-        tutorialList.add( new FirstAidTutorial("Things to do when earthquake Strike","When an earthquake strike, these are things that should be done"));
+
+        ApiRequest.getInstance().getTutorialList(new ApiRequest.RealTimeServerCallback() {
+            @Override
+            public void onNewData(Object object) {
+                FirstAidTutorial tutorial = (FirstAidTutorial) object;
+                if(viewInterface!=null) {
+                    viewInterface.addTutorial(tutorial);
+                    viewInterface.notifyAdapter();
+                }
+            }
+
+            @Override
+            public void onDataChanged(Object object) {
+
+            }
+
+            @Override
+            public void onDataRemoved(Object object) {
+
+            }
+
+            @Override
+            public void onCancelled(Object object) {
+
+            }
+        });
 
         List<String> categoryList = new ArrayList<>();
-        categoryList.add("Pilih kategori");
-        categoryList.add("Gunung Meletus");
-        categoryList.add("Gempa Bumi");
-        categoryList.add("Tanah Longsor");
-        categoryList.add("Banjir");
-        categoryList.add("Kebakaran");
+        categoryList.add("Choose a Category");
+        categoryList.add("Volcanic Eruption");
+        categoryList.add("Earthquake");
+        categoryList.add("Avalanche");
+        categoryList.add("Flood");
+        categoryList.add("Fire Disaster");
+
+        viewInterface.setCategoryList(categoryList);
+        viewInterface.notifyCategoryAdapter();
 
 
-        if(viewInterface!=null) {
-            viewInterface.setList(tutorialList);
-            viewInterface.notifyAdapter();
-            viewInterface.setCategoryList(categoryList);
-            viewInterface.notifyCategoryAdapter();
-        }
 
     }
 

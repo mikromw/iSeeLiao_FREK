@@ -11,6 +11,7 @@ import java.util.List;
 public interface FirstAidInterface {
     interface View{
         void notifyAdapter();
+        void addTutorial(FirstAidTutorial tutorial);
         void setList(List<FirstAidTutorial> firstAidTutorials);
         void setCategoryList(List<String> categoryList);
         void notifyCategoryAdapter();

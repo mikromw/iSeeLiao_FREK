@@ -1,6 +1,8 @@
 package com.milfrost.frek.modul.dashboard.first_aid_page;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +44,6 @@ public class FirstAidAdapter extends RecyclerView.Adapter<FirstAidAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         final FirstAidTutorial firstAidTutorial = firstAidTutorials.get(position);
         holder.title.setText(firstAidTutorial.title);
-        holder.spoiler.setText(firstAidTutorial.content);
         if(firstAidTutorial.coverUrl!=null) {
             Picasso.with(context)
                     .load(firstAidTutorial.coverUrl)
@@ -52,6 +53,9 @@ public class FirstAidAdapter extends RecyclerView.Adapter<FirstAidAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 //open fragmentDetails
+                Intent intent = new Intent(context,TutorialDetailsActivity.class);
+                intent.putExtra("tutorial",firstAidTutorial);
+                context.startActivity(intent);
             }
         });
     }

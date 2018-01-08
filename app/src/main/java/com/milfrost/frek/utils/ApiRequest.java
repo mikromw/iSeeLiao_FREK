@@ -29,8 +29,10 @@ import com.milfrost.frek.models.Chat;
 import com.milfrost.frek.models.Circle;
 import com.milfrost.frek.models.CircleLoadingStatus;
 import com.milfrost.frek.models.Comment;
+import com.milfrost.frek.models.FirstAidTutorial;
 import com.milfrost.frek.models.NewsFeedLoadingStatus;
 import com.milfrost.frek.models.Newsfeed;
+import com.milfrost.frek.models.TutorialStep;
 import com.milfrost.frek.models.User;
 import com.milfrost.frek.models.UserMedia;
 
@@ -651,6 +653,70 @@ public class ApiRequest {
         newsCommentRef.child(commentKey).setValue(1);
 
         callback.onSuccess(null);
+    }
+
+    public void getTutorialList(final RealTimeServerCallback realTimeServerCallback){
+        databaseReference.child("tutorials").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(final DataSnapshot dataSnapshot, String s) {
+                final FirstAidTutorial tutorial = new FirstAidTutorial(dataSnapshot);
+                final List<TutorialStep> tutorialSteps = new ArrayList<TutorialStep>();
+                Iterator i = dataSnapshot.child("steps").getChildren().iterator();
+                while (i.hasNext()){
+                    DataSnapshot stepSnapshot = (DataSnapshot) i.next();
+                    getTutorialStepDetails(stepSnapshot.getKey(), new ServerCallback() {
+                        @Override
+                        public void onSuccess(Object object) {
+                            tutorialSteps.add((TutorialStep)object);
+                            if(tutorialSteps.size()==(int) dataSnapshot.child("steps").getChildrenCount()){
+                                tutorial.tutorialSteps = tutorialSteps;
+                                realTimeServerCallback.onNewData(tutorial);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Object object) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getTutorialStepDetails(String stepId, final ServerCallback serverCallback){
+        databaseReference.child("steps").child(stepId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                TutorialStep step = new TutorialStep(dataSnapshot);
+                serverCallback.onSuccess(step);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                serverCallback.onError(databaseError);
+            }
+        });
     }
 
 }

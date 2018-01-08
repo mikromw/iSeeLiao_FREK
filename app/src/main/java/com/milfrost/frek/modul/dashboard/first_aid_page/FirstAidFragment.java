@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -30,6 +31,7 @@ public class FirstAidFragment extends Fragment implements FirstAidInterface.View
 
 
     RecyclerView tutorialList;
+    List<FirstAidTutorial> savedTutorials;
     List<FirstAidTutorial> firstAidTutorials;
     FirstAidAdapter firstAidAdapter;
 
@@ -51,6 +53,7 @@ public class FirstAidFragment extends Fragment implements FirstAidInterface.View
         view = inflater.inflate(R.layout.fragment_first_aid, container, false);
         initViews();
         initObjects();
+        setEvents();
         return view;
     }
 
@@ -70,6 +73,7 @@ public class FirstAidFragment extends Fragment implements FirstAidInterface.View
         tutorialList.setHasFixedSize(true);
 
         categoryList = new ArrayList<>();
+        savedTutorials = new ArrayList<>();
         categoryAdapter = new ArrayAdapter<String>(getContext(),R.layout.white_spinner_item,categoryList);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -79,10 +83,49 @@ public class FirstAidFragment extends Fragment implements FirstAidInterface.View
         firstAidPresenter.loadData();
     }
 
+    private void filterResult(String category){
+        firstAidTutorials.clear();
+        if(category.equals("")){
+            firstAidTutorials.addAll(savedTutorials);
+        }
+        else {
+            for (FirstAidTutorial firstAidTutorial : savedTutorials) {
+                if (firstAidTutorial.category.toLowerCase().equals(category.toLowerCase())) {
+                    firstAidTutorials.add(firstAidTutorial);
+                }
+            }
+        }
+        firstAidAdapter.notifyDataSetChanged();
+    }
+
+    private void setEvents(){
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i==0) {
+                    filterResult("");
+                }
+                else {
+                    filterResult(categoryList.get(i));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
 
     @Override
     public void notifyAdapter() {
         firstAidAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void addTutorial(FirstAidTutorial tutorial) {
+        firstAidTutorials.add(tutorial);
+        savedTutorials.add(tutorial);
     }
 
     @Override
