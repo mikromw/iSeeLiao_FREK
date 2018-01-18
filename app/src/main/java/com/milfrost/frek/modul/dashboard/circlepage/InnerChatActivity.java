@@ -110,7 +110,7 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.add_member) {
+        /*if (id == R.id.add_member) {
             return true;
         }else if(id==R.id.left_circle){
             return true;
@@ -118,7 +118,8 @@ public class InnerChatActivity extends AppCompatActivity implements CirclePageIn
         else if(id==R.id.view_member){
             return true;
         }
-        else if(id==R.id.view_locations){
+        else*/
+        if(id==R.id.view_locations){
             Bundle bundle = new Bundle();
             Intent intent = new Intent(this,MapLocationActivity.class);
             intent.putExtra("circle",circle);

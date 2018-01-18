@@ -1,6 +1,7 @@
 package com.milfrost.frek.modul.dashboard.homepage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
@@ -81,6 +82,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 else {
                     holder.readMoreBtnHolder.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+        holder.shareHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody ="\""+ newsfeed.content + " \"published via FREK (Fast Response Emergency Kit)";
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
             }
         });
         holder.comment.setText(newsfeed.getCommentAmount());

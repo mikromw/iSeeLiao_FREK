@@ -3,6 +3,7 @@ package com.milfrost.frek.modul.dashboard.emergency_number;
 import android.content.Context;
 
 import com.milfrost.frek.models.EmergencyNumber;
+import com.milfrost.frek.modul.dashboard.Dashboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +16,14 @@ public class EmergencyNumberPresenter {
 
     Context context;
     EmergencyNumberInterface.View viewInterface;
+    List<EmergencyNumber> emergencyNumbers;
 
     public EmergencyNumberPresenter (Context context){
         this.context = context;
     }
 
     public void loadData(){
-        List<EmergencyNumber> emergencyNumbers = new ArrayList<>();
+        emergencyNumbers = new ArrayList<>();
         emergencyNumbers.add(new EmergencyNumber("RS. Methodist","(061) 7369000",EmergencyNumber.DOCTOR));
         emergencyNumbers.add(new EmergencyNumber("RS. Columbia Asia","(061) 4566368",EmergencyNumber.DOCTOR));
         emergencyNumbers.add(new EmergencyNumber("Kantor SAR Medan","(061) 8368111",EmergencyNumber.SAVE_AND_RESCUE));
@@ -36,8 +38,15 @@ public class EmergencyNumberPresenter {
         }
     }
 
-    public void filterSearch(){
-
+    public void filterSearch(String query){
+        List<EmergencyNumber> emergencyNumberList = new ArrayList<>();
+        for(EmergencyNumber emergencyNumber:emergencyNumbers){
+            if(emergencyNumber.name.toLowerCase().contains(query.toLowerCase())){
+                emergencyNumberList.add(emergencyNumber);
+            }
+        }
+        viewInterface.setList(emergencyNumberList);
+        viewInterface.notifyAdapter();
     }
 
     public void getCurrentLocation(){

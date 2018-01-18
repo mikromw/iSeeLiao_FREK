@@ -41,6 +41,7 @@ public class SplashScreen extends AppCompatActivity {
         permissionList.add( Manifest.permission.ACCESS_FINE_LOCATION);
         permissionList.add( android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         permissionList.add( android.Manifest.permission.READ_CONTACTS);
+        permissionList.add( Manifest.permission.CAMERA);
         /*ActivityCompat.requestPermissions(this,new String[]{
         android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.ACCESS_COARSE_LOCATION},REQUEST_PERMISSION);*/
         askForPermission(permissionList,REQUEST_PERMISSION);

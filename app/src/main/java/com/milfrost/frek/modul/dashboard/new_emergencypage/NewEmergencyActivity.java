@@ -4,10 +4,13 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -21,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -28,16 +32,22 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.milfrost.frek.R;
 import com.milfrost.frek.models.Category;
 import com.milfrost.frek.utils.ApiRequest;
+import com.milfrost.frek.utils.Constant;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class NewEmergencyActivity extends AppCompatActivity implements NewEmergencyActivityInterface.View {
+public class NewEmergencyActivity extends AppCompatActivity implements NewEmergencyActivityInterface.View,NewEmergencyActivityInterface.ImageAdapterCommunication {
 
+    static final int REQUEST_IMAGE_CAPTURE = 0;
+
+    File pickedImage;
     Toolbar toolbar;
 
     RecyclerView imageRecyclerView;
@@ -104,6 +114,7 @@ public class NewEmergencyActivity extends AppCompatActivity implements NewEmerge
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(NewEmergencyActivity.this, LinearLayoutManager.HORIZONTAL, false));
 
         imageAdapter = new ImageAdapter(NewEmergencyActivity.this, imagePath);
+        imageAdapter.adapterCommunication = this;
         imageRecyclerView.setAdapter(imageAdapter);
         imageRecyclerView.setLayoutManager(new LinearLayoutManager(NewEmergencyActivity.this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -127,9 +138,8 @@ public class NewEmergencyActivity extends AppCompatActivity implements NewEmerge
             Log.d("Debug", "getImageUri: "+Uri.fromFile(new File(imagePath.get(imageAdapter.chosenImage))).toString());
             return Uri.fromFile(new File(imagePath.get(imageAdapter.chosenImage)));
         }else{
-
+            return Uri.fromFile(pickedImage);
         }
-        return null;
     }
 
     @Override
@@ -152,8 +162,10 @@ public class NewEmergencyActivity extends AppCompatActivity implements NewEmerge
                 });
             }
         }
-        else{
-
+        else if(requestCode==Constant.REQ_CAMERA_CODE){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                useCamera();
+            }
         }
     }
 
@@ -204,6 +216,9 @@ public class NewEmergencyActivity extends AppCompatActivity implements NewEmerge
                         }
                     });
                 }
+                else{
+                    Toast.makeText(NewEmergencyActivity.this,validation(),Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -238,6 +253,41 @@ public class NewEmergencyActivity extends AppCompatActivity implements NewEmerge
         dialog.show();
     }
 
+    public boolean hasCamera(){
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    private void useCamera(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent,REQUEST_IMAGE_CAPTURE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==REQUEST_IMAGE_CAPTURE&&resultCode==RESULT_OK){
+            System.out.println("image ok");
+            Bundle bundle = data.getExtras();
+            Bitmap bm = (Bitmap)bundle.get("data");
+            //create a file to write bitmap data
+            pickedImage = new File(this.getCacheDir(), "frekimg");
+            try {
+                pickedImage.createNewFile();
+            }catch (Exception e){e.printStackTrace();}
+
+//Convert bitmap to byte array
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            byte[] bitmapData = bos.toByteArray();
+
+//write the bytes in file
+            try {
+                FileOutputStream fos = new FileOutputStream(pickedImage);
+                fos.write(bitmapData);
+                fos.flush();
+                fos.close();
+            }catch (Exception e){}
+        }
+    }
 
     @Override
     public void setCategoryList(List<Category> categoryList) {
@@ -259,5 +309,21 @@ public class NewEmergencyActivity extends AppCompatActivity implements NewEmerge
     @Override
     public void notifyImageAdapter() {
         imageAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void openCamera() {
+        if(hasCamera()){
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA}, Constant.REQ_CAMERA_CODE);
+            }else{
+                useCamera();
+            }
+        }
+    }
+
+    @Override
+    public void openGallery() {
+
     }
 }

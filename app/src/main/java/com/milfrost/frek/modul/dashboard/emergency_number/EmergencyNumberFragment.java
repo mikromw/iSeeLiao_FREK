@@ -12,9 +12,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.milfrost.frek.R;
 import com.milfrost.frek.models.EmergencyNumber;
@@ -29,8 +33,10 @@ import java.util.List;
 public class EmergencyNumberFragment extends Fragment implements EmergencyNumberInterface.View {
 
     View view;
+    TextView locationLabel;
     EmergencyNumberPresenter emergencyNumberPresenter;
     EmergencyNumberAdapter numberAdapter;
+    EditText searchBar;
     List<EmergencyNumber> emergencyNumberList;
 
     RecyclerView numberRv;
@@ -48,12 +54,20 @@ public class EmergencyNumberFragment extends Fragment implements EmergencyNumber
 
         initViews();
         initObjects();
+        setEvents();
 
         return view;
     }
 
+    private void setEvents(){
+        searchBar.addTextChangedListener(onSearchTyped);
+    }
+
+
     private void initViews(){
         numberRv = (RecyclerView)view.findViewById(R.id.emergency_num_rv);
+        searchBar = (EditText)view.findViewById(R.id.search_bar);
+        //locationLabel = (TextView)view.findViewById(R.id.location_label);
     }
 
     private void initObjects(){
@@ -71,6 +85,24 @@ public class EmergencyNumberFragment extends Fragment implements EmergencyNumber
         emergencyNumberPresenter.loadData();
     }
 
+
+
+    private TextWatcher onSearchTyped = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            emergencyNumberPresenter.filterSearch(editable.toString());
+        }
+    };
     @Override
     public void makePhoneCall(String number){
         if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_GRANTED){

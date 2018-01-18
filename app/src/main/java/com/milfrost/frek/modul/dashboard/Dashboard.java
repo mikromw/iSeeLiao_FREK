@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -19,6 +22,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.milfrost.frek.MyApplication;
 import com.milfrost.frek.R;
 import com.milfrost.frek.modul.dashboard.circlepage.ChatFragment;
 import com.milfrost.frek.modul.dashboard.circlepage.CirclePage;
@@ -26,15 +33,19 @@ import com.milfrost.frek.modul.dashboard.emergency_number.EmergencyNumberFragmen
 import com.milfrost.frek.modul.dashboard.first_aid_page.FirstAidFragment;
 import com.milfrost.frek.modul.dashboard.homepage.HomeFragment;
 import com.milfrost.frek.modul.dashboard.new_emergencypage.NewEmergencyActivity;
+import com.milfrost.frek.modul.dashboard.new_emergencypage.NewEmergencyActivityInterface;
 import com.milfrost.frek.modul.dashboard.profilepage.ProfileFragment;
 import com.milfrost.frek.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Dashboard extends AppCompatActivity {
+
+    List<Address> addresses = new ArrayList<Address>();
 
     private final int pageCount= 5;
 
@@ -142,6 +153,52 @@ public class Dashboard extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
     }
+
+    /*private void getLocationString(final getAsyncCallback getAsyncCallback){
+        final Geocoder geocoder;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        getLocation(new NewEmergencyActivityInterface.LocationCallback() {
+            @Override
+            public void onLocationRetrieved(Location location) {
+                try {
+                    addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    getAsyncCallback.onSuccess(addresses.get(0).getAddressLine(0)+" ,"
+                            +addresses.get(0).getLocality()+" "
+                            +addresses.get(0).getCountryName() );
+                }catch (Exception e){e.printStackTrace();}
+
+            }
+
+            @Override
+            public void onFail(Object obj) {
+
+            }
+        });
+
+    }
+
+    private void getLocation(final NewEmergencyActivityInterface.LocationCallback locationCallback) {
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},1);
+            System.out.println("getLocation: Permission not granted");
+        }else{
+            System.out.println("getLocation: Permission granted");
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                locationCallback.onLocationRetrieved(location);
+                                // Logic to handle location object
+                            }
+                        }
+                    });
+        }
+
+    }*/
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

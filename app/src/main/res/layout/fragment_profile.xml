@@ -134,11 +134,6 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/log_out"/>
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_right_arrow_white"
-            android:tint="@color/colorPrimary"/>
     </LinearLayout>
     </LinearLayout>
 

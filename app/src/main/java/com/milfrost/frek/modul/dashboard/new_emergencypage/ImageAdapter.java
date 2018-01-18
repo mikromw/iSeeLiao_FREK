@@ -19,11 +19,14 @@ import java.util.List;
  * Created by vincent on 06/12/17.
  */
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
+public class ImageAdapter extends RecyclerView.Adapter{
 
-    int chosenImage;
+    final static int VIEW_CAMERA = 0;
+    final static int VIEW_IMAGE = 1;
+    int chosenImage = -1;
     Context context;
     List<String> imagePath;
+    NewEmergencyActivityInterface.ImageAdapterCommunication adapterCommunication;
 
     public ImageAdapter(Context context,List<String> imagePath){
         this.context = context;
@@ -31,42 +34,72 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.image_model,parent,false);
-        return new ViewHolder(view);
+    public int getItemViewType(int position) {
+        if (position==0)
+            return VIEW_CAMERA;
+        else
+            return VIEW_IMAGE;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
-        String path = imagePath.get(position);
-        if(position==chosenImage){
-            holder.chosenImage.setVisibility(View.VISIBLE);
-        }else {
-            holder.chosenImage.setVisibility(View.GONE);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(viewType==VIEW_CAMERA) {
+            View view = LayoutInflater.from(context).inflate(R.layout.image_model, parent, false);
+            return new ImageViewHolder(view);
+        }else{
+            View view = LayoutInflater.from(context).inflate(R.layout.image_model, parent, false);
+            return new ViewHolder(view);
         }
-        Glide.with(context)
-                .load(path)
-                .into(holder.imageView);
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(position==0){
-                    //open camera
-                }else if(position==imagePath.size()-1){
-                    //open gallery
-                }else{
+    }
+
+
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        if(position!=0) {
+            final ViewHolder vHolder = (ViewHolder)holder;
+            String path = imagePath.get(position);
+            if (position == chosenImage) {
+                vHolder.chosenImage.setVisibility(View.VISIBLE);
+            } else {
+                vHolder.chosenImage.setVisibility(View.GONE);
+            }
+            Glide.with(context)
+                    .load(path)
+                    .into(vHolder.imageView);
+            vHolder.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     chosenImage = position;
-                    notifyDataSetChanged();
+                    if (position == 0) {
+                        adapterCommunication.openCamera();
+                        //open camera
+                    } else if (position == imagePath.size() - 1) {
+                        adapterCommunication.openGallery();
+                        //open gallery
+                    } else {
+                        vHolder.chosenImage.setVisibility(View.VISIBLE);
+                        notifyDataSetChanged();
+                    }
+
                 }
-                holder.chosenImage.setVisibility(View.VISIBLE);
-            }
-        });
-        holder.chosenImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.chosenImage.setVisibility(View.GONE);
-            }
-        });
+            });
+            vHolder.chosenImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    vHolder.chosenImage.setVisibility(View.GONE);
+                }
+            });
+        }else{
+            ImageViewHolder imgViewHolder = (ImageViewHolder)holder;
+            imgViewHolder.chosenImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    chosenImage = 0;
+                    adapterCommunication.openCamera();
+                }
+            });
+        }
     }
 
     @Override
@@ -74,6 +107,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
         return imagePath.size();
     }
 
+    class ImageViewHolder extends RecyclerView.ViewHolder{
+        ImageView imageView;
+        ImageView chosenImage;
+        public ImageViewHolder(View view){
+            super(view);
+            imageView = (ImageView)view.findViewById(R.id.image_view);
+            chosenImage = (ImageView)view.findViewById(R.id.chosen_mask);
+        }
+    }
     class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imageView;
         ImageView chosenImage;

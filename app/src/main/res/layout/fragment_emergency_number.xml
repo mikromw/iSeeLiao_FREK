@@ -25,7 +25,7 @@
             android:padding="10dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <LinearLayout
+            <!--<LinearLayout
                 android:paddingBottom="20dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
@@ -39,6 +39,7 @@
                     android:src="@drawable/ic_location"
                     android:tint="@color/colorPrimary"/>
                 <TextView
+                    android:id="@+id/location_label"
                     style="@style/bold_font"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -46,10 +47,10 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/t3"
                     android:textColor="@color/text_color" />
-            </LinearLayout>
+            </LinearLayout>-->
             <LinearLayout
-                android:background="@drawable/border_top_grey"
-                android:paddingTop="20dp"
+                android:background="@color/white"
+                android:paddingTop="10dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
@@ -62,6 +63,7 @@
                     android:tint="@color/colorPrimary"
                     android:src="@drawable/ic_magnifying_glass"/>
                 <EditText
+                    android:id="@+id/search_bar"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_marginLeft="10dp"

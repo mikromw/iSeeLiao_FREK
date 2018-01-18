@@ -1,9 +1,11 @@
 package com.milfrost.frek.modul.dashboard.profilepage;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +104,7 @@ public class ProfileFragment extends Fragment implements ProfileFragmentInterfac
         logOutCont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logOut();
+                showLogoutPrompt();
             }
         });
     }
@@ -115,6 +117,22 @@ public class ProfileFragment extends Fragment implements ProfileFragmentInterfac
 
     }
 
+    private void showLogoutPrompt(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Logout")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        logOut();
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        }).show();
+    }
     private void logOut(){
         ApiRequest.getInstance().signOut();
         Intent intent = new Intent(getActivity(), LoginPage.class);
